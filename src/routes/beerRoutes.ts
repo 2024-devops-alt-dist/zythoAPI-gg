@@ -18,4 +18,11 @@ router.get("/beers", beers.getAllBeers);
  * Description: Cette route appelle le controller beerController getBeerById
  */
 router.get("/beers/:id_beer", beers.getBeerById);
+/**
+ * Route pour supprimmer une bière
+ * Méthode : DELETE
+ * Url: /api/beers/:id_beer
+ * Description: Cette route appelle le controller beerController deletBeerById
+ */
+router.delete("/beers/:id_beer", beers.deletBeerById);
 export default router;
