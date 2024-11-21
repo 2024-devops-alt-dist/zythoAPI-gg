@@ -19,3 +19,15 @@ Développe l'API en utilisant Node.js avec Express. Utilisation de TypeScript po
 Pas d'ORM : Gère les requêtes SQL préparées directement dans les contrôleurs.
 Respect des principes REST et documentation détaillée de l'API.
 Un fichier Dockerfile doit être créé pour l'API et intégré en tant que conteneur dans le fichier docker-compose.yml
+
+# Initialisation de Node.js et Express avec TypeScript
+
+Ce projet utilise Node.js, Express et TypeScript pour créer une application web rapide et modulaire.
+
+## Initialisation des dépendance
+
+Pour démarrer le projet, exécutez la commande suivante afin d'installer toutes les dépendances nécessaires :
+
+```bash
+ npm install
+```
