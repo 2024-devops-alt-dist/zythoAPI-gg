@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ESNext", // Générer du JS compatible avec ES6+
+    "module": "ESNext", // Utiliser ESModules (import/export)
+    "outDir": "./dist", // Répertoire de sortie des fichiers JS
+    "rootDir": "./src", // Répertoire contenant les fichiers source
+    "strict": true, // Activer les vérifications strictes
+    "esModuleInterop": true, // Faciliter l'import des modules CommonJS
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"], // Inclure tous les fichiers TypeScript dans src
+  "exclude": ["node_modules"]
+}

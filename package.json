@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "Après la mise en place de notre base de données pleine d'infos sur les bières artisanales, il est temps de s'attaquer à la prochaine étape : le développement de l'API.",
   "main": "server.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon --verbose",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "author": "gwen",
   "license": "ISC",
@@ -14,6 +17,8 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.9.1",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.3"
   }
