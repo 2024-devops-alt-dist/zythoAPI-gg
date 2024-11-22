@@ -33,4 +33,12 @@ router.delete("/beers/:id_beer", beers.deletBeerById);
  * Description: Cette route appelle le controller beerController createBeer pour créer une nouvelle bière
  */
 router.post("/beers", beers.createBeer);
+/**
+ * Route pour mettre à jour une bière
+ * Méthode : PATCH
+ * Url: /api/beers/:id_beer
+ * Body: id_picture, name, description, abv, color, price
+ * Description: Cette route appelle le controller beerController upDateBeerById pour mettre à jour une bière avec l'ID passer dans l'url
+ */
+router.patch("/beers/:id_beer", beers.upDateBeerById);
 export default router;

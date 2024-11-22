@@ -124,4 +124,43 @@ const createBeer = async (req: Request, res: Response) => {
   }
 };
 
-export default { getAllBeers, getBeerById, deletBeerById, createBeer };
+/**
+ * Cette fonction permet de mettre à jour une bière spécifique
+ * Retour :
+ *  - un statut 200 (ok) si la bière à bien été mis à jour
+ *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
+ */
+const upDateBeerById = async (req: Request, res: Response) => {
+  try {
+    const { id_beer } = req.params;
+    const { id_picture, name, description, abv, color, price } = req.body;
+    const result = await db.query(
+      "UPDATE beer b SET id_picture = $1, name = $2, description = $3, abv = $4, color = $5, price = $6 WHERE b.id_beer = $7 RETURNING *",
+      [
+        Number(id_picture),
+        name,
+        description,
+        Number(abv),
+        color,
+        Number(price),
+        Number(id_beer),
+      ]
+    );
+    res.status(200).json({
+      message: "La bière à été mise à jour avec succès",
+      beer: result.rows[0], // Contient les détails de la nouvel bière
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "La mise à jour a échoué.",
+    });
+  }
+};
+
+export default {
+  getAllBeers,
+  getBeerById,
+  deletBeerById,
+  createBeer,
+  upDateBeerById,
+};
