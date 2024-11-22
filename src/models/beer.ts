@@ -1,6 +1,8 @@
 export interface BeerInterface {
   id_beer: number;
   id_brewerie: number;
+  id_category: number;
+  id_picture: number;
   name: string;
   description: string;
   abv: number;

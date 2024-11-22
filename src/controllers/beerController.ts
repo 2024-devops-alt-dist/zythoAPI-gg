@@ -5,6 +5,9 @@ import { BeerInterface } from "../models/beer.js";
 
 /**
  * Cette fonction récupère toutes les bières depuis la BDD et renvoie le résultat sous la forme d'un json
+ * Retour :
+ *  - un statut 200 (ok) si les bières sont trouvées, retourne les détails de celles-ci
+ *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
 const getAllBeers = async (req: Request, res: Response) => {
   try {
@@ -12,12 +15,9 @@ const getAllBeers = async (req: Request, res: Response) => {
     const result: QueryResult<BeerInterface[]> = await db.query(
       "SELECT * FROM beer"
     );
-
-    // Renvoie les données récupérer et un statut 200 (ok)
     res.status(200).json(result.rows);
   } catch (error) {
     console.error(error);
-    // Renvoie un statut 500 (erreur serveur) avec un message
     res.status(500).json({
       message: "Une erreur est apparu lors de la récupération des bière",
     });
@@ -25,14 +25,17 @@ const getAllBeers = async (req: Request, res: Response) => {
 };
 
 /**
- * Cette fonction récupère la bière de l'Id passer en parametre de l'url
+ * Cette fonction récupère une bière spécifique en fonction de son ID passé dans les paramètres de l'URL
+ * Retour :
+ *  - un statut 404 (Not Found) si aucune bière avec cet ID n'est trouvée dans la base de données
+ *  - un statut 200 (ok) si la bière est trouvée, retourne les détails de celle-ci
+ *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
 const getBeerById = async (req: Request, res: Response) => {
   try {
     // Récupération de l'id dans les paramètre de l'url
     // req.params retourne un objet je dois donc le déstructurer pour récupérer l'id uniquement
     const { id_beer } = req.params;
-    // Execute une requête SQL pour récupérer la bière demander
     // les paramètre d'url sont automatiquement des string je le parse donc avec le type Number
     const result: QueryResult<BeerInterface> = await db.query(
       "SELECT * FROM beer b WHERE b.id_beer = $1",
@@ -46,11 +49,8 @@ const getBeerById = async (req: Request, res: Response) => {
       // Stope la function pour éviter la surcharge
       return;
     }
-
-    // Si la ressource est trouver renvoie la ressource avec un statut 200 (ok)
     res.status(200).json(result.rows[0]);
   } catch (error) {
-    // Renvoie un statut 500 (erreur serveur) avec un message
     res.status(500).json({
       message: "La récupération de à échouer",
     });
@@ -59,6 +59,9 @@ const getBeerById = async (req: Request, res: Response) => {
 
 /**
  * Cette fonction permet de supprimmer la ressource passer en parametre dans l'url avec son id
+ * Retour :
+ *  - un statut 200 (ok) si la bière à bien été supprimmer
+ *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
 const deletBeerById = async (req: Request, res: Response) => {
   try {
@@ -76,4 +79,49 @@ const deletBeerById = async (req: Request, res: Response) => {
   }
 };
 
-export default { getAllBeers, getBeerById, deletBeerById };
+/**
+ * Cette fonction permet de créer une bière
+ * Retour :
+ *  - un statut 200 (ok) si la nouvelle bière à bien été créer
+ *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
+ */
+const createBeer = async (req: Request, res: Response) => {
+  try {
+    // Déstructuration des propriétés nécessaires depuis le corps de la requête
+    const {
+      id_brewerie,
+      id_category,
+      id_picture,
+      name,
+      description,
+      abv,
+      color,
+      price,
+    } = req.body;
+
+    // RETURNING * permet de retourner le resultat de la nouvel bière dans le result.rows[0]
+    const result: QueryResult<BeerInterface> = await db.query(
+      "INSERT INTO beer (id_brewerie, id_category, id_picture, name, description, abv, color, price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      [
+        Number(id_brewerie),
+        Number(id_category),
+        Number(id_picture),
+        name,
+        description,
+        Number(abv),
+        color,
+        Number(price),
+      ]
+    );
+    res.status(200).json({
+      message: "La bière à été ajouté avec succès",
+      beer: result.rows[0], // Contient les détails de la nouvel bière
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "L'ajout a échoué.",
+    });
+  }
+};
+
+export default { getAllBeers, getBeerById, deletBeerById, createBeer };
