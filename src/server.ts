@@ -1,8 +1,7 @@
 import express from "express";
-import db from "./utils/db.js";
-import beerRoutes from "./routes/beerRoutes.js";
-import { setupSwagger } from "../openapi.config.js";
-
+import db from "./utils/db";
+import beerRoutes from "./routes/beerRoutes";
+import { setupSwagger } from "../openapi.config";
 const app = express(); // Création d'une application Express
 const PORT = process.env.PORT || 3000; // Port d'écoute, par defaut 300 si aucune variable d'env n'est définie
 app.use(express.json());
