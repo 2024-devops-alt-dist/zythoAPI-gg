@@ -2,10 +2,10 @@
   "name": "zythoapi-gg",
   "version": "1.0.0",
   "description": "Après la mise en place de notre base de données pleine d'infos sur les bières artisanales, il est temps de s'attaquer à la prochaine étape : le développement de l'API.",
-  "main": "server.js",
-  "type": "module",
+  "main": "dist/server.js",
+  "type": "commonjs",
   "scripts": {
-    "dev": "nodemon --verbose",
+    "dev": "nodemon --watch src --exec 'ts-node src/server.ts'",
     "build": "tsc",
     "start": "node dist/server.js"
   },

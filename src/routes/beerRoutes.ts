@@ -1,5 +1,5 @@
 import express from "express";
-import beers from "../controllers/beerController.js";
+import beers from "../controllers/beerController";
 
 // Initialisation du router Express
 const router = express.Router();

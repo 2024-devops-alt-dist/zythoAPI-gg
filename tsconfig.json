@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext", // Générer du JS compatible avec ESNext+
-    "module": "ESNext", // Utiliser ESNext (import/export)
+    "module": "CommonJS", // Utiliser ESNext (import/export)
     "moduleResolution": "node",
     "outDir": "./dist", // Répertoire de sortie des fichiers JS
     "rootDir": "./", // Répertoire contenant les fichiers source
