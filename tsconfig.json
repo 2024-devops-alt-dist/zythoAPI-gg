@@ -4,7 +4,7 @@
     "module": "ESNext", // Utiliser ESNext (import/export)
     "moduleResolution": "node",
     "outDir": "./dist", // Répertoire de sortie des fichiers JS
-    "rootDir": "./src", // Répertoire contenant les fichiers source
+    "rootDir": "./", // Répertoire contenant les fichiers source
     "strict": true, // Activer les vérifications strictes
     "esModuleInterop": true, // Faciliter l'import des modules CommonJS
     "forceConsistentCasingInFileNames": true,

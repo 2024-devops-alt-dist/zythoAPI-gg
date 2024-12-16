@@ -1,8 +1,14 @@
 import express from "express";
 import db from "./utils/db.js";
 import beerRoutes from "./routes/beerRoutes.js";
+import { setupSwagger } from "../openapi.config.js";
+
 const app = express(); // Création d'une application Express
 const PORT = process.env.PORT || 3000; // Port d'écoute, par defaut 300 si aucune variable d'env n'est définie
+app.use(express.json());
+
+// Configuration Swagger
+setupSwagger(app);
 
 // Route de base pour voir si l'API fonctionne
 app.get("/", (req, res) => {

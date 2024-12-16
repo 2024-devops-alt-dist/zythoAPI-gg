@@ -1,0 +1,12 @@
+openapi: 3.0.0
+info:
+  title: API Example
+  version: 1.0.0
+  description: Documentation pour l'API
+paths:
+  /beers:
+    get:
+      summary: Récupère toute les biéres
+      responses:
+        "200":
+          description: Liste des biéres

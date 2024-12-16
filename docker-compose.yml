@@ -33,7 +33,9 @@ services:
     depends_on:
       - db
     volumes:
-      - .:/usr/src/app
+      - .:/usr/src/app # Monte tout le dossier local dans lecontainer Docker
+      - /usr/src/app/node_modules # Exclut le node_module
+      - ./swagger.yaml:/usr/src/app/swagger.yaml # Monte le fichier swagger.yaml dans le conatiner Docker
     container_name: zytho_api
 
 volumes:
