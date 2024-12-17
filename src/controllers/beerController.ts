@@ -1,10 +1,10 @@
-import { QueryResult } from "pg";
-import db from "../utils/db";
 import { Response, Request } from "express";
 import { BeerInterface } from "../models/beer";
+import beerService from "../services/beerService";
 
 /**
- * Cette fonction récupère toutes les bières depuis la BDD et renvoie le résultat sous la forme d'un json
+ * Cette fonction appel le service beerService.getAll() pour récupérer une liste de bière
+ *
  * Retour :
  *  - un statut 200 (ok) si les bières sont trouvées, retourne les détails de celles-ci
  *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
@@ -12,10 +12,8 @@ import { BeerInterface } from "../models/beer";
 const getAllBeers = async (req: Request, res: Response) => {
   try {
     // Execute une requête SQL pour récupérer toutes les lignes de la table beer
-    const result: QueryResult<BeerInterface[]> = await db.query(
-      "SELECT * FROM beer"
-    );
-    res.status(200).json(result.rows);
+    const beers: BeerInterface[] = await beerService.getAll();
+    res.status(200).json(beers);
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -24,16 +22,23 @@ const getAllBeers = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Cette fonction récupére une bière spécifique avec son id
+ *
+ * @param id_brewerie
+ * @returns
+ */
 const findBeerById = async (id_beer: string) => {
-  const beersResult: QueryResult<BeerInterface> = await db.query(
-    "SELECT * FROM beer b WHERE b.id_beer = $1",
-    [Number(id_beer)]
+  const chackBeerById: BeerInterface | null = await beerService.findById(
+    id_beer,
+    "id_beer"
   );
-  return beersResult.rows[0] || null;
+  return chackBeerById || null;
 };
 
 /**
- * Cette fonction récupère une bière spécifique en fonction de son ID passé dans les paramètres de l'URL
+ * Cette fonction vérifie si l'id demander éxiste bien dans la BDD
+ *
  * Retour :
  *  - un statut 404 (Not Found) si aucune bière avec cet ID n'est trouvée dans la base de données
  *  - un statut 200 (ok) si la bière est trouvée, retourne les détails de celle-ci
@@ -45,14 +50,14 @@ const getBeerById = async (req: Request, res: Response) => {
     // req.params retourne un objet je dois donc le déstructurer pour récupérer l'id uniquement
     const { id_beer } = req.params;
     // les paramètre d'url sont automatiquement des string je le parse donc avec le type Number
-    const result = await findBeerById(id_beer);
-    if (!result) {
+    const chackBeerById: BeerInterface | null = await findBeerById(id_beer);
+    if (!chackBeerById) {
       res.status(404).json({
         message: "La bière demander n'a pas été trouver",
       });
       return;
     }
-    res.status(200).json(result);
+    res.status(200).json(chackBeerById);
   } catch (error) {
     res.status(500).json({
       message: "La récupération de à échouer",
@@ -61,7 +66,9 @@ const getBeerById = async (req: Request, res: Response) => {
 };
 
 /**
- * Cette fonction permet de supprimmer la ressource passer en parametre dans l'url avec son id
+ * Cette fonction vérifie si l'id demander éxiste bien dans la BDD et
+ * appel le service beerService.deleteById pour supprimer une bière spécifique
+ *
  * Retour :
  *  - un statut 404 (Not Found) si aucune bière avec cet ID n'est trouvée dans la base de données
  *  - un statut 200 (ok) si la bière à bien été supprimmer
@@ -70,16 +77,14 @@ const getBeerById = async (req: Request, res: Response) => {
 const deletBeerById = async (req: Request, res: Response) => {
   try {
     const { id_beer } = req.params;
-    const result = await findBeerById(id_beer);
-    if (!result) {
+    const chackBeerById: BeerInterface | null = await findBeerById(id_beer);
+    if (!chackBeerById) {
       res.status(404).json({
         message: "La bière demander n'a pas été trouver",
       });
       return;
     }
-    await db.query("DELETE FROM beer b WHERE b.id_beer = $1", [
-      Number(id_beer),
-    ]);
+    await beerService.deleteById(id_beer, "id_beer");
     res.status(200).json({
       message: "La bière à été supprimmer avec succès",
     });
@@ -110,23 +115,19 @@ const createBeer = async (req: Request, res: Response) => {
       price,
     } = req.body;
 
-    // RETURNING * permet de retourner le resultat de la nouvel bière dans le result.rows[0]
-    const result: QueryResult<BeerInterface> = await db.query(
-      "INSERT INTO beer (id_brewerie, id_category, id_picture, name, description, abv, color, price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
-      [
-        Number(id_brewerie),
-        Number(id_category),
-        Number(id_picture),
-        name,
-        description,
-        Number(abv),
-        color,
-        Number(price),
-      ]
-    );
+    const newBeer: BeerInterface = await beerService.create({
+      id_brewerie,
+      id_category,
+      id_picture,
+      name,
+      description,
+      abv,
+      color,
+      price,
+    });
     res.status(200).json({
       message: "La bière à été ajouté avec succès",
-      beer: result.rows[0], // Contient les détails de la nouvel bière
+      beer: newBeer,
     });
   } catch (error) {
     res.status(500).json({
@@ -136,7 +137,9 @@ const createBeer = async (req: Request, res: Response) => {
 };
 
 /**
- * Cette fonction permet de mettre à jour une bière spécifique
+ * Cette fonction vérifie si l'id demander éxiste bien dans la BDD et
+ * appel le service beerService.upDate pour mettre à jour une bière
+ *
  * Retour :
  *  - un statut 404 (Not Found) si aucune bière avec cet ID n'est trouvée dans la base de données
  *  - un statut 200 (ok) si la bière à bien été mis à jour
@@ -145,29 +148,25 @@ const createBeer = async (req: Request, res: Response) => {
 const upDateBeerById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id_beer } = req.params;
-    const beersResult = await findBeerById(id_beer);
-    if (!beersResult) {
+    const chackBeerById: BeerInterface | null = await findBeerById(id_beer);
+    if (!chackBeerById) {
       res.status(404).json({
         message: "La bière demander n'a pas été trouver",
       });
       return;
     }
     const { id_picture, name, description, abv, color, price } = req.body;
-    const result = await db.query(
-      "UPDATE beer b SET id_picture = $1, name = $2, description = $3, abv = $4, color = $5, price = $6 WHERE b.id_beer = $7 RETURNING *",
-      [
-        Number(id_picture),
-        name,
-        description,
-        Number(abv),
-        color,
-        Number(price),
-        Number(id_beer),
-      ]
-    );
+    const newBeer: BeerInterface = await beerService.upDate(id_beer, {
+      id_picture,
+      name,
+      description,
+      abv,
+      color,
+      price,
+    });
     res.status(200).json({
       message: "La bière à été mise à jour avec succès",
-      beer: result.rows[0], // Contient les détails de la nouvel bière
+      beer: newBeer, // Contient les détails de la nouvel bière
     });
   } catch (error) {
     res.status(500).json({

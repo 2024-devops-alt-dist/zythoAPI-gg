@@ -1,39 +1,39 @@
-import { QueryResult } from "pg";
-import db from "../utils/db";
 import { Response, Request } from "express";
+import BrewerieService from "../services/brewerieService";
 import { BrewerieInterface } from "../models/brewerie";
 
 /**
- * Cette fonction récupère toutes les brasseries depuis la BDD et renvoie le résultat sous la forme d'un json
+ * Cette fonction appel le service BrewerieService.getAll() pour récupérer une liste de brasserie
+ *
  * Retour :
  *  - un statut 200 (ok) si les brasseries sont trouvées, retourne les détails de celles-ci
  *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
 const getAllBrewerie = async (req: Request, res: Response) => {
   try {
-    // Execute une requête SQL pour récupérer toutes les lignes de la table brewerie
-    const result: QueryResult<BrewerieInterface[]> = await db.query(
-      "SELECT * FROM brewerie"
-    );
-    res.status(200).json(result.rows);
+    const breweries: BrewerieInterface[] = await BrewerieService.getAll();
+    res.status(200).json(breweries);
   } catch (error) {
-    console.error(error);
     res.status(500).json({
-      message: "Une erreur est apparu lors de la récupération des brasseries",
+      message: "Une erreur est apparue lors de la récupération des brasseries.",
     });
   }
 };
 
+/**
+ * Cette fonction récupére une brasserie spécifique avec son id
+ * @param id_brewerie
+ * @returns
+ */
 const findBrewerieById = async (id_brewerie: string) => {
-  const brewerieResult: QueryResult<BrewerieInterface> = await db.query(
-    "SELECT * FROM brewerie b WHERE b.id_brewerie = $1",
-    [Number(id_brewerie)]
-  );
-  return brewerieResult.rows[0] || null;
+  const brewerieResult: BrewerieInterface | null =
+    await BrewerieService.findById(id_brewerie, "id_brewerie");
+  return brewerieResult || null;
 };
 
 /**
- * Cette fonction récupère une brasserie spécifique en fonction de son ID passé dans les paramètres de l'URL
+ *  Cette fonction vérifie si l'id demander éxiste bien dans la BDD
+ *
  * Retour :
  *  - un statut 404 (Not Found) si aucune brasserie avec cet ID n'est trouvée dans la base de données
  *  - un statut 200 (ok) si la brasserie est trouvée, retourne les détails de celle-ci
@@ -45,14 +45,16 @@ const getBrewerieById = async (req: Request, res: Response) => {
     // req.params retourne un objet je dois donc le déstructurer pour récupérer l'id uniquement
     const { id_brewerie } = req.params;
     // les paramètre d'url sont automatiquement des string je le parse donc avec le type Number
-    const result = await findBrewerieById(id_brewerie);
-    if (!result) {
+    const chackBrawerieById: BrewerieInterface | null = await findBrewerieById(
+      id_brewerie
+    );
+    if (!chackBrawerieById) {
       res.status(404).json({
         message: "La brasserie demander n'a pas été trouver",
       });
       return;
     }
-    res.status(200).json(result);
+    res.status(200).json(chackBrawerieById);
   } catch (error) {
     res.status(500).json({
       message: "La récupération à échouer",
@@ -61,7 +63,9 @@ const getBrewerieById = async (req: Request, res: Response) => {
 };
 
 /**
- * Cette fonction permet de supprimmer la ressource passer en parametre dans l'url avec son id
+ * Cette fonction vérifie si l'id demander éxiste bien dans la BDD et
+ * appel le service BrewerieService.deleteById pour supprimer une brasserie spécifique
+ *
  * Retour :
  *  - un statut 404 (Not Found) si aucune brasserie avec cet ID n'est trouvée dans la base de données
  *  - un statut 200 (ok) si la brasserie à bien été supprimmer
@@ -70,16 +74,14 @@ const getBrewerieById = async (req: Request, res: Response) => {
 const deletBrewerieById = async (req: Request, res: Response) => {
   try {
     const { id_brewerie } = req.params;
-    const result = await findBrewerieById(id_brewerie);
-    if (!result) {
+    const chackBrawerieById = await findBrewerieById(id_brewerie);
+    if (!chackBrawerieById) {
       res.status(404).json({
         message: "La brasserie demander n'a pas été trouver",
       });
       return;
     }
-    await db.query("DELETE FROM brewerie b WHERE b.id_brewerie = $1", [
-      Number(id_brewerie),
-    ]);
+    BrewerieService.deleteById(id_brewerie, "id_brewerie");
     res.status(200).json({
       message: "La brasserie à été supprimmer avec succès",
     });
@@ -101,14 +103,13 @@ const createBrewerie = async (req: Request, res: Response) => {
     // Déstructuration des propriétés nécessaires depuis le corps de la requête
     const { name, country } = req.body;
 
-    // RETURNING * permet de retourner le resultat de la nouvel brasserie dans le result.rows[0]
-    const result: QueryResult<BrewerieInterface> = await db.query(
-      "INSERT INTO brewerie (name, country) VALUES ($1, $2) RETURNING *",
-      [name, country]
-    );
+    const newBrawerie: BrewerieInterface = await BrewerieService.create({
+      name,
+      country,
+    });
     res.status(200).json({
       message: "La brasserie à été ajouté avec succès",
-      brewerie: result.rows[0], // Contient les détails de la nouvel brasserie
+      brewerie: newBrawerie, // Contient les détails de la nouvel brasserie
     });
   } catch (error) {
     res.status(500).json({
@@ -118,7 +119,9 @@ const createBrewerie = async (req: Request, res: Response) => {
 };
 
 /**
- * Cette fonction permet de mettre à jour une brasserie spécifique
+ * Cette fonction vérifie si l'id demander éxiste bien dans la BDD et
+ * appel le service BrewerieService.upDate pour mettre à jour une brasserie
+ *
  * Retour :
  *  - un statut 404 (Not Found) si aucune brasserie avec cet ID n'est trouvée dans la base de données
  *  - un statut 200 (ok) si la brasserie à bien été mis à jour
@@ -130,21 +133,23 @@ const upDateBrewerieById = async (
 ): Promise<void> => {
   try {
     const { id_brewerie } = req.params;
-    const brewerieResult = await findBrewerieById(id_brewerie);
-    if (!brewerieResult) {
+    const chackBrawerieById: BrewerieInterface | null = await findBrewerieById(
+      id_brewerie
+    );
+    if (!chackBrawerieById) {
       res.status(404).json({
         message: "La brasserie demander n'a pas été trouver",
       });
       return;
     }
     const { name, country } = req.body;
-    const result = await db.query(
-      "UPDATE brewerie b SET name = $1, country = $2 RETURNING *",
-      [name, country]
+    const newBrewerie: BrewerieInterface = await BrewerieService.upDate(
+      id_brewerie,
+      { name, country }
     );
     res.status(200).json({
       message: "La brasserie à été mise à jour avec succès",
-      brewerie: result.rows[0], // Contient les détails de la nouvel brasserie
+      brewerie: newBrewerie, // Contient les détails de la nouvel brasserie
     });
   } catch (error) {
     res.status(500).json({
