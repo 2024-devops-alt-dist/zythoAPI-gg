@@ -1,0 +1,80 @@
+get:
+  summary: Récupère une bière spécifique avec son ID
+  tags:
+    - Bière
+  description: Retourne une bière spécifique avec son ID
+  parameters:
+    - in: path
+      name: id_beer
+      schema:
+        type: integer
+      required: true
+      description: L'ID de la bière
+  responses:
+    "200":
+      description: Détails de la bière
+      content:
+        application/json:
+          schema:
+            $ref: "../components/beersShemas.yaml#/components/schemas/Beer"
+    "404":
+      description: Aucune bière trouvée
+    "500":
+      description: La récupération a échoué
+delete:
+  summary: Supprime une bière spécifique avec son ID
+  tags:
+    - Bière
+  description: Cette requête supprime une bière spécifique avec son ID
+  parameters:
+    - in: path
+      name: id_beer
+      schema:
+        type: integer
+      required: true
+      description: L'ID de la bière
+  responses:
+    "200":
+      description: La bière a été supprimée avec succès
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: La bière a été supprimée avec succès
+    "404":
+      description: Aucune bière trouvée
+    "500":
+      description: La suppression a échoué
+patch:
+  summary: Mise à jour d'une bière
+  tags:
+    - Bière
+  description: Cette requête met à jour une bière
+  parameters:
+    - in: path
+      name: id_beer
+      schema:
+        type: integer
+      required: true
+      description: L'ID de la bière
+  requestBody:
+    description: Les informations nécessaires pour mettre à jour une bière
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../components/beersShemas.yaml#/components/schemas/BeerInput"
+  responses:
+    "200":
+      description: La bière a été mise à jour avec succès
+      content:
+        application/json:
+          schema:
+            $ref: "../components/beersShemas.yaml#/components/schemas/Beer"
+    "404":
+      description: Aucune bière trouvée
+    "500":
+      description: La mise à jour a échoué

@@ -1,0 +1,57 @@
+openapi: 3.1.0
+info:
+  title: API Beers
+  version: 1.0.0
+  description: Documentation pour l'API de bière
+servers:
+  - url: http://localhost:3000/api/
+    description: Optional server description, e.g. Main (production) server
+
+components:
+  schemas:
+    Beer:
+      type: object
+      properties:
+        id_beer:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "ADN"
+        description:
+          type: string
+          example: "Bière artisanale"
+        abv:
+          type: number
+          example: 5.5
+        color:
+          type: string
+          example: "Ambrée"
+        price:
+          type: number
+          example: 15.99
+
+    BeerInput:
+      type: object
+      required:
+        - name
+        - description
+        - abv
+        - color
+        - price
+      properties:
+        name:
+          type: string
+          example: "Nouvelle Bière"
+        description:
+          type: string
+          example: "Bière artisanale"
+        abv:
+          type: number
+          example: 5.5
+        color:
+          type: string
+          example: "Ambrée"
+        price:
+          type: number
+          example: 15.99

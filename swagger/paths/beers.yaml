@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+
+paths:
+  /beers:
+    get:
+    summary: Récupère toutes les bières
+    tags:
+      - Bière
+    description: Cette requête retourne la liste complète des bières disponibles
+    responses:
+      "200":
+        description: Liste des bières
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../components/beersShemas.yaml#/components/schemas/Beer"
+      "500":
+        description: La récupération a échoué
+  post:
+    summary: Création d'une bière
+    tags:
+      - Bière
+    description: Cette requête crée une bière
+    requestBody:
+      description: Les informations nécessaires pour créer une bière
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../components/beersShemas.yaml#/components/schemas/BeerInput"
+    responses:
+      "200":
+        description: La bière a été créée avec succès
+        content:
+          application/json:
+            schema:
+              $ref: "../components/beersShemas.yaml#/components/schemas/Beer"
+      "500":
+        description: La création a échoué
