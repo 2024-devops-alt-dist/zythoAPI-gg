@@ -10,6 +10,8 @@ paths:
   /beers:
     get:
       summary: Récupère toutes les bières
+      tags:
+        - Bière
       description: Cette requête retourne la liste complète des bières disponibles
       responses:
         "200":
@@ -24,6 +26,8 @@ paths:
           description: La récupération a échoué
     post:
       summary: Création d'une bière
+      tags:
+        - Bière
       description: Cette requête crée une bière
       requestBody:
         description: Les informations nécessaires pour créer une bière
@@ -31,7 +35,7 @@ paths:
         content:
           application/json:
             schema:
-            $ref: "#/components/schemas/BeerInput"
+              $ref: "#/components/schemas/BeerInput"
       responses:
         "200":
           description: La bière a été créée avec succès
@@ -45,6 +49,8 @@ paths:
   /beers/{id_beer}:
     get:
       summary: Récupère une bière spécifique avec sont ID
+      tags:
+        - Bière
       description: Cette requête retourne une bière spécifique avec sont ID
       parameters:
         - in: path
@@ -66,6 +72,8 @@ paths:
             $ref: "#/components/schemas/Beer"
     delete:
       summary: Supprime une bière spécifique avec sont ID
+      tags:
+        - Bière
       description: Cette requête supprime une bière spécifique avec sont ID
       parameters:
         - in: path
@@ -91,6 +99,8 @@ paths:
           description: La suppression à échouer
     patch:
       summary: Mise à jour d'une bière
+      tags:
+        - Bière
       description: Cette requête met à jour une bière
       parameters:
         - in: path
@@ -136,6 +146,132 @@ paths:
         "500":
           description: La mise à jour à échouer
 
+  /brewerie:
+    get:
+      summary: Récupère toutes les brasseries
+      tags:
+        - Brasserie
+      description: Cette requête retourne la liste complète des brasseries disponibles
+      responses:
+        "200":
+          description: Liste des brasseries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Brewerie"
+        "500":
+          description: La récupération a échoué
+    post:
+      summary: Création d'une brasserie
+      tags:
+        - Brasserie
+      description: Cette requête crée une brasserie
+      requestBody:
+        description: Les informations nécessaires pour créer une brasserie
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrewerieInput"
+      responses:
+        "200":
+          description: La brasserie a été créée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brewerie"
+        "500":
+          description: La création a échoué
+
+  /brewerie/{id_brewerie}:
+    get:
+      summary: Récupère une brasserie spécifique avec sont ID
+      tags:
+        - Brasserie
+      description: Cette requête retourne une brasserie spécifique avec sont ID
+      parameters:
+        - in: path
+          name: id_brewerie
+          schema:
+            type: integer
+          required: true
+          description: L'id de la brasserie
+      responses:
+        "200":
+          description: Détails de la brasserie
+        "404":
+          description: Aucune brasserie n'a été trouvée.
+        "500":
+          description: La récupération de à échouer
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Brewerie"
+    delete:
+      summary: Supprime une brasserie spécifique avec sont ID
+      tags:
+        - Brasserie
+      description: Cette requête supprime une brasserie spécifique avec sont ID
+      parameters:
+        - in: path
+          name: id_brewerie
+          schema:
+            type: integer
+          required: true
+          description: L'id de la brasserie
+      responses:
+        "404":
+          description: Aucune brasserie n'a été trouvée.
+        "200":
+          description: La brasserie à été supprimer avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: La brasserie à été supprimer avec succès
+        "500":
+          description: La suppression à échouer
+    patch:
+      summary: Mise à jour d'une brasserie
+      tags:
+        - Brasserie
+      description: Cette requête met à jour une brasserie
+      parameters:
+        - in: path
+          name: id_brewerie
+          schema:
+            type: integer
+          required: true
+          description: L'id de la brasserie
+      requestBody:
+        description: Les information necessaire pour créer une brasserie
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                  example: "ADN"
+                country:
+                  type: string
+                  example: "France"
+      responses:
+        "404":
+          description: Aucune brasserie n'a été trouvée.
+        "200":
+          description: La brasserie à été mise à jour avec succères
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brewerie"
+        "500":
+          description: La mise à jour à échouer
 components:
   schemas:
     BeerInput:
@@ -212,3 +348,27 @@ components:
           type: string
           format: date-time
           example: "2024-11-22T14:41:07.454Z"
+    Brewerie:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "ADN"
+        country:
+          type: string
+          example: France
+    BrewerieInput:
+      type: object
+      required:
+        - name
+        - country
+      properties:
+        name:
+          type: string
+          example: "Nouvelle Brasserie"
+        country:
+          type: string
+          example: France
