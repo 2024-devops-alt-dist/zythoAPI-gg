@@ -13,11 +13,11 @@ export class BaseService {
    *
    * @returns Un promise de type BeerInterface ou BrewerieInterface
    */
-  getAll = async (): Promise<BeerInterface[] | BrewerieInterface[]> => {
+  getAll = async <T>(): Promise<T[]> => {
     try {
       const query = `SELECT * FROM ${this.tableName}`;
       const { rows } = await db.query(query);
-      return rows;
+      return rows as T[];
     } catch (error) {
       throw new Error(
         `Erreur lors de la récupération des données de ${this.tableName}`
@@ -32,17 +32,14 @@ export class BaseService {
    * @param nameId Le nom de l'id
    * @returns Promise de type BeerInterface, BrewerieInterface ou null
    */
-  findById = async (
-    id: string,
-    nameId: string
-  ): Promise<BeerInterface | BrewerieInterface | null> => {
+  findById = async <T>(id: string, nameId: string): Promise<T | null> => {
     try {
       const query = `SELECT * FROM ${this.tableName} WHERE ${nameId} = $1`;
       const { rows } = await db.query(query, [id]);
       if (rows.length === 0) {
         return null; // Retourne null si aucune donnée trouvée
       }
-      return rows[0];
+      return rows[0] as T;
     } catch (error) {
       throw new Error(
         `Erreur lors de la récupération des données de ${this.tableName}`
@@ -73,9 +70,7 @@ export class BaseService {
    * @param data Un objet de type BeerInterface ou BrewerieInterface
    * @returns Une Promise de type BeerInterface ou BrewerieInterface
    */
-  create = async (data: {
-    [key: string]: any;
-  }): Promise<BeerInterface | BrewerieInterface> => {
+  create = async <T>(data: { [key: string]: any }): Promise<T> => {
     try {
       const keys = Object.keys(data).join(", "); // Extrait le nom de la colonne
       const placeholders = Object.keys(data)
@@ -86,7 +81,7 @@ export class BaseService {
       const query = `INSERT INTO ${this.tableName} (${keys}) VALUES (${placeholders}) RETURNING *`;
 
       const { rows } = await db.query(query, values);
-      return rows[0];
+      return rows[0] as T;
     } catch (error) {
       throw new Error(`Erreur lors de la création dans ${this.tableName}`);
     }
@@ -99,10 +94,7 @@ export class BaseService {
    * @param data Un objet de type BeerInterface ou BrewerieInterface
    * @returns
    */
-  upDate = async (
-    id: string,
-    data: { [key: string]: any }
-  ): Promise<BeerInterface | BrewerieInterface> => {
+  upDate = async <T>(id: string, data: { [key: string]: any }): Promise<T> => {
     try {
       const placeholders = Object.keys(data)
         .map((key, index) => `${key} = $${index + 1}`) // Ex: "name = $1, country = $2"
@@ -112,7 +104,7 @@ export class BaseService {
       const query = `UPDATE ${this.tableName} SET ${placeholders} WHERE id_brewerie = $${values.length} RETURNING *`;
 
       const { rows } = await db.query(query, values);
-      return rows[0];
+      return rows[0] as T;
     } catch (error) {
       throw new Error(`Erreur lors de la création dans ${this.tableName}`);
     }
