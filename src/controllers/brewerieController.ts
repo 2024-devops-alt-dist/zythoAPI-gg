@@ -1,5 +1,6 @@
 import { Response, Request } from "express";
 import BrewerieService from "../services/brewerieService";
+import { BrewerieInterface } from "../models/brewerie";
 
 /**
  * Cette fonction appel le service BrewerieService.getAll() pour récupérer une liste de brasserie
@@ -10,8 +11,8 @@ import BrewerieService from "../services/brewerieService";
  */
 const getAllBrewerie = async (req: Request, res: Response) => {
   try {
-    const resultat = await BrewerieService.getAll();
-    res.status(200).json(resultat);
+    const breweries: BrewerieInterface[] = await BrewerieService.getAll();
+    res.status(200).json(breweries);
   } catch (error) {
     res.status(500).json({
       message: "Une erreur est apparue lors de la récupération des brasseries.",
@@ -25,16 +26,9 @@ const getAllBrewerie = async (req: Request, res: Response) => {
  * @returns
  */
 const findBrewerieById = async (id_brewerie: string) => {
-  try {
-    const brewerieResult = await BrewerieService.findById(
-      id_brewerie,
-      "id_brewerie"
-    );
-
-    return brewerieResult;
-  } catch (error) {
-    return null;
-  }
+  const brewerieResult: BrewerieInterface | null =
+    await BrewerieService.findById(id_brewerie, "id_brewerie");
+  return brewerieResult || null;
 };
 
 /**
@@ -51,14 +45,16 @@ const getBrewerieById = async (req: Request, res: Response) => {
     // req.params retourne un objet je dois donc le déstructurer pour récupérer l'id uniquement
     const { id_brewerie } = req.params;
     // les paramètre d'url sont automatiquement des string je le parse donc avec le type Number
-    const result = await findBrewerieById(id_brewerie);
-    if (!result) {
+    const chackBrawerieById: BrewerieInterface | null = await findBrewerieById(
+      id_brewerie
+    );
+    if (!chackBrawerieById) {
       res.status(404).json({
         message: "La brasserie demander n'a pas été trouver",
       });
       return;
     }
-    res.status(200).json(result);
+    res.status(200).json(chackBrawerieById);
   } catch (error) {
     res.status(500).json({
       message: "La récupération à échouer",
@@ -78,8 +74,8 @@ const getBrewerieById = async (req: Request, res: Response) => {
 const deletBrewerieById = async (req: Request, res: Response) => {
   try {
     const { id_brewerie } = req.params;
-    const result = await findBrewerieById(id_brewerie);
-    if (!result) {
+    const chackBrawerieById = await findBrewerieById(id_brewerie);
+    if (!chackBrawerieById) {
       res.status(404).json({
         message: "La brasserie demander n'a pas été trouver",
       });
@@ -107,11 +103,13 @@ const createBrewerie = async (req: Request, res: Response) => {
     // Déstructuration des propriétés nécessaires depuis le corps de la requête
     const { name, country } = req.body;
 
-    // RETURNING * permet de retourner le resultat de la nouvel brasserie dans le result.rows[0]
-    const result = await BrewerieService.create({ name, country });
+    const newBrawerie: BrewerieInterface = await BrewerieService.create({
+      name,
+      country,
+    });
     res.status(200).json({
       message: "La brasserie à été ajouté avec succès",
-      brewerie: result, // Contient les détails de la nouvel brasserie
+      brewerie: newBrawerie, // Contient les détails de la nouvel brasserie
     });
   } catch (error) {
     res.status(500).json({
@@ -135,18 +133,23 @@ const upDateBrewerieById = async (
 ): Promise<void> => {
   try {
     const { id_brewerie } = req.params;
-    const brewerieResult = await findBrewerieById(id_brewerie);
-    if (!brewerieResult) {
+    const chackBrawerieById: BrewerieInterface | null = await findBrewerieById(
+      id_brewerie
+    );
+    if (!chackBrawerieById) {
       res.status(404).json({
         message: "La brasserie demander n'a pas été trouver",
       });
       return;
     }
     const { name, country } = req.body;
-    const result = await BrewerieService.upDate(id_brewerie, { name, country });
+    const newBrewerie: BrewerieInterface = await BrewerieService.upDate(
+      id_brewerie,
+      { name, country }
+    );
     res.status(200).json({
       message: "La brasserie à été mise à jour avec succès",
-      brewerie: result, // Contient les détails de la nouvel brasserie
+      brewerie: newBrewerie, // Contient les détails de la nouvel brasserie
     });
   } catch (error) {
     res.status(500).json({
