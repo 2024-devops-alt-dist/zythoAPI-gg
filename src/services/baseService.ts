@@ -1,8 +1,9 @@
-import { QueryResult } from "pg";
-import { BrewerieInterface } from "../models/brewerie";
 import db from "../utils/db";
-import { BeerInterface } from "../models/beer";
 
+/**
+ * Cette classe générique est un service pour les méthode GET POST DELETE et PATCH
+ * @constructor Le nom de la table dans la BDD
+ */
 export class BaseService {
   constructor(private tableName: string) {
     this.tableName = tableName;
@@ -94,14 +95,18 @@ export class BaseService {
    * @param data Un objet de type BeerInterface ou BrewerieInterface
    * @returns
    */
-  upDate = async <T>(id: string, data: { [key: string]: any }): Promise<T> => {
+  upDate = async <T>(
+    id: string,
+    nameId: string,
+    data: { [key: string]: any }
+  ): Promise<T> => {
     try {
       const placeholders = Object.keys(data)
         .map((key, index) => `${key} = $${index + 1}`) // Ex: "name = $1, country = $2"
         .join(", ");
       //   const values = Object.values(data); // Extrait les valeurs de la requête
       const values = [...Object.values(data), id];
-      const query = `UPDATE ${this.tableName} SET ${placeholders} WHERE id_brewerie = $${values.length} RETURNING *`;
+      const query = `UPDATE ${this.tableName} SET ${placeholders} WHERE ${nameId} = $${values.length} RETURNING *`;
 
       const { rows } = await db.query(query, values);
       return rows[0] as T;

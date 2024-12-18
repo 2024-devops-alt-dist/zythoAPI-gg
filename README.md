@@ -6,21 +6,43 @@ On vise à créer une API REST, à la fois simple et performante, qui va nous pe
 
 En utilisant la base de données créée selon les spécifications du brief précédent, cette API permettra de naviguer à travers un univers de bières artisanales venues des quatre coins du monde, de les partager et de découvrir de nouvelles saveurs.
 
-## Technologies et Outils
-
-Développe l'API en utilisant Node.js avec Express. Utilisation de TypeScript pour un typage strict et une meilleure maintenabilité.
-
 ## Contraintes
 
 Pas d'ORM : Gère les requêtes SQL préparées directement dans les contrôleurs.
 Respect des principes REST et documentation détaillée de l'API.
 Un fichier Dockerfile doit être créé pour l'API et intégré en tant que conteneur dans le fichier docker-compose.yml
 
-# Initialisation de Node.js et Express avec TypeScript
+## Technologies et Outils
+
+- Node.js et Express : Pour développer l'API.
+- TypeScript : Pour un typage strict et une meilleure maintenabilité.
+- BaseService : Une classe utilitaire pour centraliser les opérations CRUD de base sur toutes les tables.
+
+### BaseService : Gestion centralisée des requêtes CRUD
+
+Pour simplifier et uniformiser les opérations sur les différentes tables de la base de données, l'application utilise un BaseService.
+
+#### Fonctionnalités principales
+
+Le BaseService fournit les méthodes suivantes pour interagir avec la base de données :
+
+- create : Insérer une nouvelle entrée dans une table.
+- read : Récupérer une ou plusieurs entrées.
+- update : Mettre à jour une entrée spécifique.
+- delete : Supprimer une entrée spécifique.
+  Ces méthodes utilisent des requêtes SQL préparées pour interagir directement avec la base de données, sans utiliser d'ORM.
+
+#### Avantages du BaseService
+
+- Réduction de la duplication : Toutes les tables partagent une logique commune pour les opérations de base, ce qui réduit la duplication du code.
+- Facilité de maintenance : Toute modification apportée aux méthodes CRUD dans le BaseService se propage automatiquement à toutes les tables.
+- Respect des principes REST : Les contrôleurs de l'API peuvent se concentrer uniquement sur la gestion des requêtes et des réponses HTTP, en déléguant la logique métier au BaseService.
+
+### Initialisation de Node.js et Express avec TypeScript
 
 Ce projet utilise Node.js, Express et TypeScript pour créer une application web rapide et modulaire.
 
-## Initialisation des dépendance
+- Initialisation des dépendances
 
 Pour démarrer le projet, exécutez la commande suivante afin d'installer toutes les dépendances nécessaires :
 
@@ -28,9 +50,9 @@ Pour démarrer le projet, exécutez la commande suivante afin d'installer toutes
  docker compose up --build
 ```
 
-[Api disponnible](http://localhost:3000/api/beers)
+[Api disponnible - http://localhost:3000/api/beers](http://localhost:3000/api/beers)
 
-# Documentation de l'API
+## Documentation de l'API
 
 Cette API permet de gérer des **bières** et des **brasseries**. Ci-dessous, vous trouverez les différentes routes disponibles, leurs méthodes, paramètres et descriptions.
 
@@ -38,9 +60,9 @@ Cette API permet de gérer des **bières** et des **brasseries**. Ci-dessous, vo
 
 ## Table des matières
 
-1. [Accès à la documentation Swagger](#accès-à-la-documentation-swagger)
-2. [Routes pour les bières](http://localhost:3000/api/beers)
-3. [Routes pour les brasseries](http://localhost:3000/api/brewerie)
+1. [Accès à la documentation Swagger - http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+2. [Routes pour les bières - http://localhost:3000/api/beers](http://localhost:3000/api/beers)
+3. [Routes pour les brasseries - http://localhost:3000/api/brewerie](http://localhost:3000/api/brewerie)
 
 ---
 

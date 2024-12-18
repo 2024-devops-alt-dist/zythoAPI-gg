@@ -9,7 +9,7 @@ import beerService from "../services/beerService";
  *  - un statut 200 (ok) si les bières sont trouvées, retourne les détails de celles-ci
  *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
-const getAllBeers = async (req: Request, res: Response) => {
+const getAllBeers = async (req: Request, res: Response): Promise<void> => {
   try {
     // Execute une requête SQL pour récupérer toutes les lignes de la table beer
     const beers: BeerInterface[] = await beerService.getAll();
@@ -28,12 +28,12 @@ const getAllBeers = async (req: Request, res: Response) => {
  * @param id_brewerie
  * @returns
  */
-const findBeerById = async (id_beer: string) => {
-  const chackBeerById: BeerInterface | null = await beerService.findById(
+const findBeerById = async (id_beer: string): Promise<BeerInterface | null> => {
+  const checkBeerById: BeerInterface | null = await beerService.findById(
     id_beer,
     "id_beer"
   );
-  return chackBeerById || null;
+  return checkBeerById || null;
 };
 
 /**
@@ -44,20 +44,20 @@ const findBeerById = async (id_beer: string) => {
  *  - un statut 200 (ok) si la bière est trouvée, retourne les détails de celle-ci
  *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
-const getBeerById = async (req: Request, res: Response) => {
+const getBeerById = async (req: Request, res: Response): Promise<void> => {
   try {
     // Récupération de l'id dans les paramètre de l'url
     // req.params retourne un objet je dois donc le déstructurer pour récupérer l'id uniquement
     const { id_beer } = req.params;
     // les paramètre d'url sont automatiquement des string je le parse donc avec le type Number
-    const chackBeerById: BeerInterface | null = await findBeerById(id_beer);
-    if (!chackBeerById) {
+    const checkBeerById: BeerInterface | null = await findBeerById(id_beer);
+    if (!checkBeerById) {
       res.status(404).json({
         message: "La bière demander n'a pas été trouver",
       });
       return;
     }
-    res.status(200).json(chackBeerById);
+    res.status(200).json(checkBeerById);
   } catch (error) {
     res.status(500).json({
       message: "La récupération de à échouer",
@@ -74,11 +74,11 @@ const getBeerById = async (req: Request, res: Response) => {
  *  - un statut 200 (ok) si la bière à bien été supprimmer
  *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
-const deletBeerById = async (req: Request, res: Response) => {
+const deletBeerById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id_beer } = req.params;
-    const chackBeerById: BeerInterface | null = await findBeerById(id_beer);
-    if (!chackBeerById) {
+    const checkBeerById: BeerInterface | null = await findBeerById(id_beer);
+    if (!checkBeerById) {
       res.status(404).json({
         message: "La bière demander n'a pas été trouver",
       });
@@ -101,7 +101,7 @@ const deletBeerById = async (req: Request, res: Response) => {
  *  - un statut 200 (ok) si la nouvelle bière à bien été créer
  *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
-const createBeer = async (req: Request, res: Response) => {
+const createBeer = async (req: Request, res: Response): Promise<void> => {
   try {
     // Déstructuration des propriétés nécessaires depuis le corps de la requête
     const {
@@ -148,22 +148,26 @@ const createBeer = async (req: Request, res: Response) => {
 const upDateBeerById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id_beer } = req.params;
-    const chackBeerById: BeerInterface | null = await findBeerById(id_beer);
-    if (!chackBeerById) {
+    const checkBeerById: BeerInterface | null = await findBeerById(id_beer);
+    if (!checkBeerById) {
       res.status(404).json({
         message: "La bière demander n'a pas été trouver",
       });
       return;
     }
     const { id_picture, name, description, abv, color, price } = req.body;
-    const newBeer: BeerInterface = await beerService.upDate(id_beer, {
-      id_picture,
-      name,
-      description,
-      abv,
-      color,
-      price,
-    });
+    const newBeer: BeerInterface = await beerService.upDate(
+      id_beer,
+      "id_beer",
+      {
+        id_picture,
+        name,
+        description,
+        abv,
+        color,
+        price,
+      }
+    );
     res.status(200).json({
       message: "La bière à été mise à jour avec succès",
       beer: newBeer, // Contient les détails de la nouvel bière

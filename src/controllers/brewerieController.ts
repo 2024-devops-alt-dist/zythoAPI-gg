@@ -9,7 +9,7 @@ import { BrewerieInterface } from "../models/brewerie";
  *  - un statut 200 (ok) si les brasseries sont trouvées, retourne les détails de celles-ci
  *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
-const getAllBrewerie = async (req: Request, res: Response) => {
+const getAllBrewerie = async (req: Request, res: Response): Promise<void> => {
   try {
     const breweries: BrewerieInterface[] = await BrewerieService.getAll();
     res.status(200).json(breweries);
@@ -25,7 +25,9 @@ const getAllBrewerie = async (req: Request, res: Response) => {
  * @param id_brewerie
  * @returns
  */
-const findBrewerieById = async (id_brewerie: string) => {
+const findBrewerieById = async (
+  id_brewerie: string
+): Promise<BrewerieInterface | null> => {
   const brewerieResult: BrewerieInterface | null =
     await BrewerieService.findById(id_brewerie, "id_brewerie");
   return brewerieResult || null;
@@ -39,7 +41,7 @@ const findBrewerieById = async (id_brewerie: string) => {
  *  - un statut 200 (ok) si la brasserie est trouvée, retourne les détails de celle-ci
  *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
-const getBrewerieById = async (req: Request, res: Response) => {
+const getBrewerieById = async (req: Request, res: Response): Promise<void> => {
   try {
     // Récupération de l'id dans les paramètre de l'url
     // req.params retourne un objet je dois donc le déstructurer pour récupérer l'id uniquement
@@ -71,10 +73,15 @@ const getBrewerieById = async (req: Request, res: Response) => {
  *  - un statut 200 (ok) si la brasserie à bien été supprimmer
  *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
-const deletBrewerieById = async (req: Request, res: Response) => {
+const deletBrewerieById = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { id_brewerie } = req.params;
-    const chackBrawerieById = await findBrewerieById(id_brewerie);
+    const chackBrawerieById: BrewerieInterface | null = await findBrewerieById(
+      id_brewerie
+    );
     if (!chackBrawerieById) {
       res.status(404).json({
         message: "La brasserie demander n'a pas été trouver",
@@ -98,7 +105,7 @@ const deletBrewerieById = async (req: Request, res: Response) => {
  *  - un statut 200 (ok) si la nouvelle brasserie à bien été créer
  *  - un statut 500 (Internal Server Error) en cas d'erreur inattendue lors de la requête
  */
-const createBrewerie = async (req: Request, res: Response) => {
+const createBrewerie = async (req: Request, res: Response): Promise<void> => {
   try {
     // Déstructuration des propriétés nécessaires depuis le corps de la requête
     const { name, country } = req.body;
@@ -145,6 +152,7 @@ const upDateBrewerieById = async (
     const { name, country } = req.body;
     const newBrewerie: BrewerieInterface = await BrewerieService.upDate(
       id_brewerie,
+      "id_brewerie",
       { name, country }
     );
     res.status(200).json({
