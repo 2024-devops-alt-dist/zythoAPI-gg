@@ -75,7 +75,7 @@ CREATE TABLE beer_ingredient
 (
     id_beer_ingredient SERIAL PRIMARY KEY,
     id_beer INT REFERENCES beer(id_beer) ON DELETE CASCADE,
-    id_ingredient INT REFERENCES ingredient(id_ingredient),
+    id_ingredient INT REFERENCES ingredient(id_ingredient) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
