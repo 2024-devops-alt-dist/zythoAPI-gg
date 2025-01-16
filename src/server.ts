@@ -3,6 +3,7 @@ import db from "./utils/db";
 import beerRoutes from "./routes/beerRoutes";
 import brewerieRoute from "./routes/brewerieRoute";
 import ingredientRoute from "./routes/ingredientRoute";
+import categoriesRoute from "./routes/categoryRoute";
 import { setupSwagger } from "../openapi.config";
 const app = express(); // Création d'une application Express
 const PORT = process.env.PORT || 3000; // Port d'écoute, par defaut 300 si aucune variable d'env n'est définie
@@ -24,6 +25,7 @@ db.connect((err) => {
   app.use("/api", beerRoutes); // Préfixe des routes
   app.use("/api", brewerieRoute); // Préfixe des routes
   app.use("/api", ingredientRoute); // Préfixe des routes
+  app.use("/api", categoriesRoute); // Préfixe des routes
 
   // Configuration Swagger
   setupSwagger(app);

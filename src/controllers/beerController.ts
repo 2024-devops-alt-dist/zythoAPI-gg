@@ -114,7 +114,7 @@ const createBeer = async (req: Request, res: Response): Promise<void> => {
       color,
       price,
     } = req.body;
-
+    console.log("Payload reçu :", req.body);
     const newBeer: BeerInterface = await beerService.create({
       id_brewerie,
       id_category,
