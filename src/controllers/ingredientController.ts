@@ -16,10 +16,13 @@ import ingredientService from "../services/ingredientService";
 const getAllIngredient = async (req: Request, res: Response): Promise<void> => {
   try {
     // Execute une requête SQL pour récupérer toutes les lignes de la table beer
-    const ingredient: IngredientInterface[] = await IngredientService.getAll();
-    console.log(ingredient);
+    const ingredients: IngredientInterface[] = await IngredientService.getAll();
+    const ingredientsWithType = ingredients.map((i) => ({
+      ...i,
+      type: "ingredient",
+    }));
 
-    res.status(200).json(ingredient);
+    res.status(200).json(ingredientsWithType);
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -68,7 +71,8 @@ const getIngredientByIdBeer = async (
       });
       return;
     }
-    res.status(200).json(checkIngredientById);
+    const ingredientWithType = { ...checkIngredientById, type: "ingredient" };
+    res.status(200).json(ingredientWithType);
   } catch (error) {
     res.status(500).json({
       message: "La récupération à échouer",

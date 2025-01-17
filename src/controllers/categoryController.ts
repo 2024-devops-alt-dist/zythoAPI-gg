@@ -12,7 +12,11 @@ import { CategoryInterface } from "../models/category";
 const getAllCategories = async (req: Request, res: Response): Promise<void> => {
   try {
     const categories: CategoryInterface[] = await CategoryService.getAll();
-    res.status(200).json(categories);
+    const categoriesWithType = categories.map((c) => ({
+      ...c,
+      type: "category",
+    }));
+    res.status(200).json(categoriesWithType);
   } catch (error) {
     res.status(500).json({
       message: "Une erreur est apparue lors de la récupération des categories.",
@@ -56,7 +60,8 @@ const getCategoryById = async (req: Request, res: Response): Promise<void> => {
       });
       return;
     }
-    res.status(200).json(checkCategoryById);
+    const categorieWithType = { ...checkCategoryById, type: "category" };
+    res.status(200).json(categorieWithType);
   } catch (error) {
     res.status(500).json({
       message: "La récupération à échouer",

@@ -10,4 +10,5 @@ export interface BeerInterface {
   price: number;
   created_at: Date;
   updated_at: Date;
+  type: string;
 }

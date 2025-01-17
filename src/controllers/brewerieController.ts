@@ -12,7 +12,11 @@ import { BrewerieInterface } from "../models/brewerie";
 const getAllBrewerie = async (req: Request, res: Response): Promise<void> => {
   try {
     const breweries: BrewerieInterface[] = await BrewerieService.getAll();
-    res.status(200).json(breweries);
+    const breweriesWithType = breweries.map((b) => ({
+      ...b,
+      type: "brewerie",
+    }));
+    res.status(200).json(breweriesWithType);
   } catch (error) {
     res.status(500).json({
       message: "Une erreur est apparue lors de la récupération des brasseries.",
@@ -47,16 +51,18 @@ const getBrewerieById = async (req: Request, res: Response): Promise<void> => {
     // req.params retourne un objet je dois donc le déstructurer pour récupérer l'id uniquement
     const { id_brewerie } = req.params;
     // les paramètre d'url sont automatiquement des string je le parse donc avec le type Number
-    const chackBrawerieById: BrewerieInterface | null = await findBrewerieById(
+    const checkBrawerieById: BrewerieInterface | null = await findBrewerieById(
       id_brewerie
     );
-    if (!chackBrawerieById) {
+    if (!checkBrawerieById) {
       res.status(404).json({
         message: "La brasserie demander n'a pas été trouver",
       });
       return;
+    } else {
+      const brewerieWithType = { ...checkBrawerieById, type: "brewerie" };
+      res.status(200).json(brewerieWithType);
     }
-    res.status(200).json(chackBrawerieById);
   } catch (error) {
     res.status(500).json({
       message: "La récupération à échouer",
@@ -79,10 +85,10 @@ const deletBrewerieById = async (
 ): Promise<void> => {
   try {
     const { id_brewerie } = req.params;
-    const chackBrawerieById: BrewerieInterface | null = await findBrewerieById(
+    const checkBrawerieById: BrewerieInterface | null = await findBrewerieById(
       id_brewerie
     );
-    if (!chackBrawerieById) {
+    if (!checkBrawerieById) {
       res.status(404).json({
         message: "La brasserie demander n'a pas été trouver",
       });
@@ -140,10 +146,10 @@ const upDateBrewerieById = async (
 ): Promise<void> => {
   try {
     const { id_brewerie } = req.params;
-    const chackBrawerieById: BrewerieInterface | null = await findBrewerieById(
+    const checkBrawerieById: BrewerieInterface | null = await findBrewerieById(
       id_brewerie
     );
-    if (!chackBrawerieById) {
+    if (!checkBrawerieById) {
       res.status(404).json({
         message: "La brasserie demander n'a pas été trouver",
       });

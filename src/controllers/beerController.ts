@@ -13,7 +13,11 @@ const getAllBeers = async (req: Request, res: Response): Promise<void> => {
   try {
     // Execute une requête SQL pour récupérer toutes les lignes de la table beer
     const beers: BeerInterface[] = await beerService.getAll();
-    res.status(200).json(beers);
+    const beersWithType = beers.map((b) => ({
+      ...b,
+      type: "beer",
+    }));
+    res.status(200).json(beersWithType);
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -57,7 +61,8 @@ const getBeerById = async (req: Request, res: Response): Promise<void> => {
       });
       return;
     }
-    res.status(200).json(checkBeerById);
+    const beerWithType = { ...checkBeerById, type: "beer" };
+    res.status(200).json(beerWithType);
   } catch (error) {
     res.status(500).json({
       message: "La récupération de à échouer",
