@@ -71,7 +71,10 @@ const getIngredientByIdBeer = async (
       });
       return;
     }
-    const ingredientWithType = { ...checkIngredientById, type: "ingredient" };
+    const ingredientWithType = checkIngredientById.map((i) => ({
+      ...i,
+      type: "ingredient",
+    }));
     res.status(200).json(ingredientWithType);
   } catch (error) {
     res.status(500).json({

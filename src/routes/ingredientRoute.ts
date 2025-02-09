@@ -15,7 +15,7 @@ router.get("/ingredients", ingredient.getAllIngredient);
 /**
  * Route pour récupérer tout les ingrédients par l'id d'une bière
  * Méthode : GET
- * Url: /api/ingredients/:id_ingredient
+ * Url: /api/ingredients/:id_beer
  * Description: Cette route appelle le controller ingredientController getingredientById pour récupérer tout les ingrédients spécifique à une bière
  */
 router.get("/ingredients/:id_beer", ingredient.getIngredientByIdBeer);
