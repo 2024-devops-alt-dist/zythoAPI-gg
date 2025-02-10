@@ -1,8 +1,41 @@
 import authService from "../services/authService";
 import { Response, Request } from "express";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import userService from "../services/userService";
 import { AuthInterface } from "../models/auth";
+import { UserInterface } from "../models/user";
+
+const login = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+
+    const existUser: UserInterface = await authService.getUserByEmail(email);
+    if (!existUser) {
+      res.status(401).json({
+        message: "L'utilisateur n'existe pas vous devez vous inscrire.",
+      });
+      return;
+    } else {
+      const isMatchPassword = bcrypt.compare(password, existUser.password);
+      if (!isMatchPassword) {
+        res.status(401).json({
+          message: "Le mot de passe est invalid.",
+        });
+        return;
+      } else {
+        const token = jwt.sign(
+          { id: existUser.password, role: existUser.role },
+          process.env.JWT_SECRET as string,
+          { expiresIn: "1h" }
+        );
+        res.status(200).json({ token, existUser });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Erreur" });
+  }
+};
 
 /**
  * Cette fonction permet d'enregistrer un nouvel utilisateur
@@ -69,4 +102,4 @@ const hashPassword = async (password: string) => {
   return await bcrypt.hash(password, salt);
 };
 
-export default { register };
+export default { register, login, hashPassword };
