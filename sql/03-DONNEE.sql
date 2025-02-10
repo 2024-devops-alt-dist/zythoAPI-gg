@@ -23,18 +23,19 @@ VALUES
 
 -- Insérer des utilisateurs --
 ALTER SEQUENCE users_id_user_seq RESTART WITH 1;
-INSERT INTO users (first_name, last_name, description, color, email, password)
+INSERT INTO users (first_name, last_name, description, role, email, password)
 VALUES
-('Alice', 'Brewster', 'Amatrice de bières artisanales.', 'blue', 'alice.brewster@example.com', 'password1'),
-('Bob', 'Hopkins', 'Collectionneur de houblons rares.', 'green', 'bob.hopkins@example.com', 'password2'),
-('Charlie', 'Maltman', 'Passionné de malts doux.', 'yellow', 'charlie.maltman@example.com', 'password3'),
-('Diana', 'Ferment', 'Exploratrice de saveurs fermentées.', 'red', 'diana.ferment@example.com', 'password4'),
-('Eve', 'Lager', 'Spécialiste des lagers légères.', 'purple', 'eve.lager@example.com', 'password5'),
-('Frank', 'Porter', 'Connaisseur des porters riches.', 'brown', 'frank.porter@example.com', 'password6'),
-('Grace', 'Pint', 'Aime partager des pintes.', 'orange', 'grace.pint@example.com', 'password7'),
-('Hank', 'Barley', 'Fanatique du goût d’orge.', 'pink', 'hank.barley@example.com', 'password8'),
-('Ivy', 'Yeast', 'Experte en levures aromatiques.', 'teal', 'ivy.yeast@example.com', 'password9'),
-('Jack', 'Stout', 'Inconditionnel des stouts intenses.', 'black', 'jack.stout@example.com', 'password10');
+('admin', 'admin', 'admin.', 'ADMIN', 'admin@example.com', 'admin'),
+('Alice', 'Brewster', 'Amatrice de bières artisanales.', 'USER', 'alice.brewster@example.com', 'password1'),
+('Bob', 'Hopkins', 'Collectionneur de houblons rares.', 'USER', 'bob.hopkins@example.com', 'password2'),
+('Charlie', 'Maltman', 'Passionné de malts doux.', 'USER', 'charlie.maltman@example.com', 'password3'),
+('Diana', 'Ferment', 'Exploratrice de saveurs fermentées.', 'USER', 'diana.ferment@example.com', 'password4'),
+('Eve', 'Lager', 'Spécialiste des lagers légères.', 'USER', 'eve.lager@example.com', 'password5'),
+('Frank', 'Porter', 'Connaisseur des porters riches.', 'USER', 'frank.porter@example.com', 'password6'),
+('Grace', 'Pint', 'Aime partager des pintes.', 'USER', 'grace.pint@example.com', 'password7'),
+('Hank', 'Barley', 'Fanatique du goût d’orge.', 'USER', 'hank.barley@example.com', 'password8'),
+('Ivy', 'Yeast', 'Experte en levures aromatiques.', 'USER', 'ivy.yeast@example.com', 'password9'),
+('Jack', 'Stout', 'Inconditionnel des stouts intenses.', 'USER', 'jack.stout@example.com', 'password10');
 
 -- Insérer des brasseries --
 ALTER SEQUENCE brewerie_id_brewerie_seq RESTART WITH 1;

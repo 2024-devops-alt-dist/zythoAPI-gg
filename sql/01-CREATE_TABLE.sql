@@ -5,7 +5,7 @@ CREATE TABLE users
     first_name VARCHAR(45) NOT NULL,
     description TEXT,
     last_name VARCHAR(45) NOT NULL,
-    color VARCHAR(20) NOT NULL,
+    role VARCHAR(20) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(150) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
