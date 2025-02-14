@@ -9,7 +9,8 @@ import userRoute from "./routes/userRoute";
 import authRoute from "./routes/authRoute";
 import { setupSwagger } from "../openapi.config";
 const app = express(); // Création d'une application Express
-const PORT = process.env.PORT || 10000; // Port d'écoute, par defaut 300 si aucune variable d'env n'est définie
+const PORT = process.env.PORT || 10000;
+const cors = require("cors"); // Port d'écoute, par defaut 300 si aucune variable d'env n'est définie
 app.use(express.json());
 
 /**
@@ -21,6 +22,17 @@ db.connect((err) => {
   if (err) throw err;
   console.log("Connected!");
   // Route de base pour voir si l'API fonctionne
+  const allowedOrigins = [
+    "https://zytho-front-38l16bmhw-gwenhannas-projects.vercel.app",
+  ];
+  app.use(
+    cors({
+      origin: allowedOrigins,
+      methods: ["GET", "POST", "PUT", "DELETE"], // Méthodes autorisées
+      allowedHeaders: ["Content-Type", "Authorization"], // Headers autorisés
+      credentials: true, // Si besoin d'envoyer des cookies
+    })
+  );
   app.get("/", (req, res) => {
     res.send("Bienvenue sur l'API de bières");
   });
