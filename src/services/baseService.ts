@@ -116,21 +116,24 @@ export class BaseService {
   };
 
   searchBeersByType = async (
-    id_type: string,
+    id_types: string[],
     type: string
-  ): Promise<{ brewerie: string; beers: string[] } | []> => {
+  ): Promise<{ beers: string[] } | []> => {
     try {
-      console.log(typeof id_type);
+      if (id_types.length === 0) return [];
 
-      const query = `SELECT ${type}.name as ${type}, b.name as beer_name FROM beer b join ${type} ${type} on ${type}.id_${type} = b.id_${type} where ${type}.id_${type} = $1`;
-      const { rows } = await db.query(query, [id_type]);
+      // Génère une liste de placeholders pour l'IN (?, ?, ?)
+      const placeholders = id_types.map((_, i) => `$${i + 1}`).join(", ");
+
+      const query = `SELECT ${type}.name as ${type}, b.name as beer_name FROM beer b join ${type} ${type} on ${type}.id_${type} = b.id_${type} where ${type}.id_${type} in (${placeholders})`;
+
+      const { rows } = await db.query(query, id_types);
+
       if (rows.length === 0) {
         return []; // Retourne null si aucune donnée trouvée
       }
-      console.log(rows, query);
 
       const formattedResult = {
-        brewerie: rows[0].brewerie,
         beers: rows.map((row) => row.beer_name),
       };
 

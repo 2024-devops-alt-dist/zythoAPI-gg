@@ -6,12 +6,14 @@ const filterSearchController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { id_type, type } = req.body;
+    const { id_types, type } = req.body;
 
     const breweries = await filterSearchService.searchBeersByType(
-      id_type,
+      id_types,
       type
     );
+    if (Array.isArray(breweries) && breweries.length === 0)
+      res.json({ message: "Aucune bière n'a été troouvée !" });
 
     res.status(200).json(breweries);
   } catch (error) {
