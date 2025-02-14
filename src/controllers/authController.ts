@@ -29,7 +29,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
           process.env.JWT_SECRET as string,
           { expiresIn: "1h" }
         );
-        res.status(200).json({ token, existUser });
+        res.status(200).json({ token, user: existUser });
       }
     }
   } catch (error) {
