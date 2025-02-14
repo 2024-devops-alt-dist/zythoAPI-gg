@@ -9,7 +9,7 @@ import userRoute from "./routes/userRoute";
 import authRoute from "./routes/authRoute";
 import { setupSwagger } from "../openapi.config";
 const app = express(); // Création d'une application Express
-const PORT = process.env.PORT || 3000; // Port d'écoute, par defaut 300 si aucune variable d'env n'est définie
+const PORT = process.env.PORT || 10000; // Port d'écoute, par defaut 300 si aucune variable d'env n'est définie
 app.use(express.json());
 
 /**

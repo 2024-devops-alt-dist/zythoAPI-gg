@@ -12,6 +12,7 @@ const db = new pg.Pool({
   ssl: {
     rejectUnauthorized: false, // Indispensable pour Neon (sinon erreur SSL)
   },
+  keepAlive: true,
 });
 
 export default db;
