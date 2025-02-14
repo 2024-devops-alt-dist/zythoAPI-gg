@@ -114,4 +114,31 @@ export class BaseService {
       throw new Error(`Erreur lors de la création dans ${this.tableName}`);
     }
   };
+
+  searchBeersByType = async (
+    id_type: string,
+    type: string
+  ): Promise<{ brewerie: string; beers: string[] } | []> => {
+    try {
+      console.log(typeof id_type);
+
+      const query = `SELECT ${type}.name as ${type}, b.name as beer_name FROM beer b join ${type} ${type} on ${type}.id_${type} = b.id_${type} where ${type}.id_${type} = $1`;
+      const { rows } = await db.query(query, [id_type]);
+      if (rows.length === 0) {
+        return []; // Retourne null si aucune donnée trouvée
+      }
+      console.log(rows, query);
+
+      const formattedResult = {
+        brewerie: rows[0].brewerie,
+        beers: rows.map((row) => row.beer_name),
+      };
+
+      return formattedResult;
+    } catch (error) {
+      throw new Error(
+        `Erreur lors de la récupération des données de ${this.tableName}`
+      );
+    }
+  };
 }

@@ -4,6 +4,7 @@ import beerRoutes from "./routes/beerRoutes";
 import brewerieRoute from "./routes/brewerieRoute";
 import ingredientRoute from "./routes/ingredientRoute";
 import categoriesRoute from "./routes/categoryRoute";
+import filterSearch from "./routes/filterSearchRoute";
 import userRoute from "./routes/userRoute";
 import authRoute from "./routes/authRoute";
 import { setupSwagger } from "../openapi.config";
@@ -30,6 +31,7 @@ db.connect((err) => {
   app.use("/api", categoriesRoute); // Préfixe des routes
   app.use("/api", userRoute); // Préfixe des routes
   app.use("/api", authRoute); // Préfixe des routes
+  app.use("/api", filterSearch); // Préfixe des routes
 
   // Configuration Swagger
   setupSwagger(app);
