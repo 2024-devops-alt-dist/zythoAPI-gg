@@ -1,3 +1,4 @@
+import { BeerInterface } from "../models/beer";
 import db from "../utils/db";
 
 /**
@@ -118,14 +119,14 @@ export class BaseService {
   searchBeersByType = async (
     id_types: string[],
     type: string
-  ): Promise<{ beers: string[] } | []> => {
+  ): Promise<{ beers: BeerInterface[] } | []> => {
     try {
       if (id_types.length === 0) return [];
 
       // Génère une liste de placeholders pour l'IN (?, ?, ?)
       const placeholders = id_types.map((_, i) => `$${i + 1}`).join(", ");
 
-      const query = `SELECT ${type}.name as ${type}, b.name as beer_name FROM beer b join ${type} ${type} on ${type}.id_${type} = b.id_${type} where ${type}.id_${type} in (${placeholders})`;
+      const query = `SELECT ${type}.name as ${type}, b.* as beer FROM beer b join ${type} ${type} on ${type}.id_${type} = b.id_${type} where ${type}.id_${type} in (${placeholders})`;
 
       const { rows } = await db.query(query, id_types);
 
@@ -134,7 +135,7 @@ export class BaseService {
       }
 
       const formattedResult = {
-        beers: rows.map((row) => row.beer_name),
+        beers: rows.map((row: BeerInterface) => row),
       };
 
       return formattedResult;
