@@ -1,10 +1,7 @@
 import { Response, Request } from "express";
 import filterSearchService from "../services/filterSearchService";
 
-const filterSearchController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const filterSearchController = async (req: Request, res: Response) => {
   try {
     const { id_types, type } = req.body;
 
@@ -12,8 +9,10 @@ const filterSearchController = async (
       id_types,
       type
     );
-    if (Array.isArray(breweries) && breweries.length === 0)
+    if (Array.isArray(breweries) && breweries.length === 0) {
       res.json({ message: "Aucune bière n'a été troouvée !" });
+      return;
+    }
 
     res.status(200).json(breweries);
   } catch (error) {
