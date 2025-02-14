@@ -23,6 +23,7 @@ db.connect((err) => {
   console.log("Connected!");
   // Route de base pour voir si l'API fonctionne
   const allowedOrigins = [
+    "http://localhost:5173",
     "https://zytho-front-38l16bmhw-gwenhannas-projects.vercel.app",
   ];
   app.use(
